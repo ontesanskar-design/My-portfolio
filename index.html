@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Sanskar's Portfolio</title>
+  <link rel="icon" href="favicon.ico" />
+  <meta name="description" content="Portfolio of Sanskar — projects, skills, education, and contact." />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0f1f;
+      --glass: rgba(255,255,255,0.06);
+      --text: #e6edf3;
+      --accent: #38bdf8;
+      --accent-soft: rgba(56,189,248,0.65);
+      --muted: rgba(230,237,243,0.85);
+      --card-shadow: 0 14px 40px rgba(0,0,0,0.5);
+      --ring: 0 0 0 1px rgba(255,255,255,0.08) inset;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+      width: 100%;
+    }
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+
+    /* Animated starry background */
+    .bg-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, #0b1f3d 0%, #071a35 55%, #041225 100%);
+      z-index: -1;
+      overflow: hidden;
+    }
+    .bg-overlay::before,
+    .bg-overlay::after {
+      content: "";
+      position: absolute;
+      inset: -10%;
+    }
+    .bg-overlay::before {
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, #38bdf8, transparent 60%),
+        radial-gradient(1px 1px at 40% 70%, #60a5fa, transparent 60%),
+        radial-gradient(1px 1px at 65% 40%, #93c5fd, transparent 60%),
+        radial-gradient(1px 1px at 80% 20%, #38bdf8, transparent 60%),
+        radial-gradient(1px 1px at 55% 85%, #93c5fd, transparent 60%);
+      opacity: 0.7;
+      animation: drift 140s linear infinite, twinkle 12s ease-in-out infinite;
+    }
+    .bg-overlay::after {
+      background-image:
+        radial-gradient(0.8px 0.8px at 15% 80%, #93c5fd, transparent 60%),
+        radial-gradient(0.8px 0.8px at 50% 15%, #38bdf8, transparent 60%),
+        radial-gradient(0.8px 0.8px at 35% 60%, #60a5fa, transparent 60%);
+      opacity: 0.5;
+      animation: driftSlow 220s linear infinite, twinkle 16s ease-in-out infinite reverse;
+    }
+    @keyframes drift {
+      0% { transform: translateY(0px) translateX(0px); }
+      50% { transform: translateY(-12px) translateX(6px); }
+      100% { transform: translateY(0px) translateX(0px); }
+    }
+    @keyframes driftSlow {
+      0% { transform: translateY(0px) translateX(0px); }
+      50% { transform: translateY(-18px) translateX(-8px); }
+      100% { transform: translateY(0px) translateX(0px); }
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 1; }
+    }
+
+    /* Navigation with corrected layout */
+    nav {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(2,6,23,0.6);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .brand {
+      font-weight: 700;
+      color: var(--text);
+      margin-right: auto;
+    }
+    .brand span { color: var(--accent); text-shadow: 0 0 12px var(--accent-soft); }
+    nav button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 18px;
+      font-size: 0.9em;
+      cursor: pointer;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      transition: transform 0.25s ease, background 0.25s ease;
+      box-shadow: var(--ring);
+      white-space: nowrap;
+    }
+    nav button:hover { transform: translateY(-2px); background: rgba(255,255,255,0.16); }
+    nav button.active { background: var(--accent); color: #03111a; font-weight: 600; }
+
+    h1 {
+      font-size: 3rem; text-align: center;
+      margin: 40px 0;
+      animation: fadeInDown 1s ease-out both;
+      color: #f8fafc;
+      text-shadow: 0 0 18px var(--accent-soft);
+    }
+    @keyframes fadeInDown { from {opacity:0; transform:translateY(-28px);} to {opacity:1; transform:translateY(0);} }
+
+    .intro, section, footer {
+      max-width: 980px;
+      width: 100%;
+      margin: 0 auto;
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+    .intro {
+      text-align: center;
+      font-size: 1.08em;
+      line-height: 1.75;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: fadeInUp 1.2s ease 0.2s forwards;
+      background: var(--glass);
+      padding: 28px;
+      border-radius: 22px;
+      color: var(--text);
+      box-shadow: var(--card-shadow);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    @keyframes fadeInUp { from {opacity:0; transform:translateY(14px);} to {opacity:1; transform:translateY(0);} }
+
+    main { flex: 1; }
+
+    section {
+      margin: 36px auto;
+      padding: 28px;
+      background: var(--glass);
+      border-radius: 22px;
+      text-align: left;
+      color: var(--text);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: none;
+      opacity: 0;
+      transform: translateY(14px) scale(0.995);
+      transition: opacity 360ms ease, transform 360ms ease;
+      will-change: opacity, transform;
+    }
+    section.show { display: block; opacity: 1; transform: translateY(0) scale(1); }
+
+    section h2 { color: var(--accent); margin-bottom: 14px; font-size: 1.9em; text-shadow: 0 0 12px var(--accent-soft); }
+    section h3 { color: #f3f4f6; margin: 18px 0 8px 0; font-weight: 700; }
+    section p { color: var(--muted); font-size: 1.04em; line-height: 1.8; margin: 8px 0 14px 0; }
+    section .content { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+    section .content.single { grid-template-columns: 1fr; }
+
+    /* Goal extra spacing */
+    #goal p, #goal li { line-height: 1.95; }
+
+    /* Image defaults */
+    section img {
+      width: 100%;
+      border-radius: 16px;
+      display: block;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+      will-change: transform, box-shadow;
+    }
+    section img:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 16px 28px rgba(0,0,0,0.6);
+    }
+
+    /* Ideal section image cap */
+    #ideal img {
+      max-height: 360px;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .divider {
+      width: 100%; height: 1px; margin: 14px 0 8px 0;
+      background: linear-gradient(to right, transparent, rgba(56,189,248,0.35), transparent);
+    }
+
+    footer {
+      text-align: center;
+      padding: 18px;
+      background: rgba(2,6,23,0.55);
+      font-size: 0.95em;
+      color: var(--text);
+      border-radius: 14px;
+      margin: 30px auto;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    footer a { color: var(--accent); text-decoration: none; margin: 0 8px; transition: color 0.25s ease; }
+    footer a:hover { color: #f8fafc; text-shadow: 0 0 10px var(--accent-soft); }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      nav { justify-content: flex-start; flex-wrap: wrap; gap: 10px; padding: 14px 12px; }
+      .brand { margin-right: auto; }
+      nav button { font-size: 0.92em; padding: 10px 12px; }
+      h1 { font-size: 2.4rem; margin-top: 24px; margin-bottom: 28px; padding: 0 12px; }
+      .intro, section, footer { width: calc(100% - 32px); margin: 0 auto; }
+      .intro { font-size: 1.02em; margin: 24px auto; padding: 22px; }
+      section { margin: 18px auto; padding: 22px; }
+      section .content { grid-template-columns: 1fr; gap: 18px; }
+      section h2 { font-size: 1.6em; }
+      section p { font-size: 1.02em; line-height: 1.7; word-wrap: break-word; overflow-wrap: break-word; }
+      section img { max-width: 100%; border-radius: 14px; }
+      footer { margin: 24px auto; padding: 16px; font-size: 0.92em; }
+    }
+    @media (max-width: 380px) {
+      nav { gap: 8px; }
+      nav button { font-size: 0.85em; padding: 9px 10px; }
+      h1 { font-size: 2rem; margin-top: 20px; margin-bottom: 24px; }
+      .intro, section, footer { width: calc(100% - 24px); margin: 0 auto; }
+      .intro { padding: 18px; }
+      section { padding: 18px; }
+      footer { padding: 14px; }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-overlay" aria-hidden="true"></div>
+
+  <nav>
+    <div class="brand">Sanskar <span>Onte</span></div>
+    <button id="homeBtn" data-section="home" onclick="showHome()">Home</button>
+    <button data-section="about" onclick="showSection('about')">About Me</button>
+    <button data-section="swot" onclick="showSection('swot')">SWOT</button>
+    <button data-section="education" onclick="showSection('education')">Education Details</button>
+    <button data-section="hobbies" onclick="showSection('hobbies')">Hobbies</button>
+    <button data-section="achievements" onclick="showSection('achievements')">Achievements</button>
+    <button data-section="vision" onclick="showSection('vision')">Vision & Mission</button>
+    <button data-section="action-plan" onclick="showSection('action-plan')">Action Plan</button>
+    <button data-section="goal" onclick="showSection('goal')">Goal</button>
+    <button data-section="ideal" onclick="showSection('ideal')">My Ideal</button>
+    <button data-section="gallery" onclick="showSection('gallery')">Gallery</button>
+  </nav>
+
+  <main>
+    <h1>Welcome to My Portfolio</h1>
+    <div class="intro">
+      <p>Hello everyone! I am <strong>Sanskar Gopal Onte</strong>, a first-year Computer Science and Engineering student at <strong>ADCET</strong>.</p>
+      <p>I explore creative ideas, build meaningful projects, and stay committed to continuous growth through curiosity, consistency, and purpose.</p>
+      <p>Here, I share my journey, values, and the work that inspires me.</p>
+    </div>
+
+    <!-- About -->
+    <section id="about">
+      <h2>About Me</h2>
+      <div class="divider"></div>
+      <div class="content">
+        <div>
+          <p>
+            I’m <strong>Sanskar Gopal Onte</strong>, a Computer Engineering student at <strong>ADCET</strong> driven by a love for programming, problem‑solving, and thoughtful design.
+            I enjoy creating solutions that blend logic with creativity and improve everyday experiences.
+          </p>
+          <p>
+            My curiosity leads me into software development, algorithms, and user‑focused engineering, guided by structure and consistency.
+            I grow through competitions, courses, and collaborative projects.
+          </p>
+          <p>
+            Inspired by science fiction like <em>Interstellar</em> and <em>Inception</em>, I pursue ideas that stretch imagination and meet real‑world needs.
+          </p>
+        </div>
+        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop" alt="Coding workspace with laptop and notes">
+      </div>
+    </section>
+
+    <!-- SWOT -->
+    <section id="swot">
+      <h2>SWOT</h2>
+      <div class="divider"></div>
+      <div class="content">
+        <img src="images/swot.jpg" alt="SWOT analysis diagram">
+        <div>
+          <h3>Strengths</h3>
+          <p>When I genuinely enjoy a task, I keep working on it until I feel it’s truly complete, which is why I stay committed to my work.</p>
+          <h3>Weaknesses</h3>
+          <p>My precision can make me overly meticulous, and I sometimes spend extra time refining details. I’m learning to balance excellence with efficiency but it consumes too much time.</p>
+          <h3>Opportunities</h3>
+          <p>I actively seek growth through competitions, stage speaking, and skill‑building courses. These experiences expand my capabilities and confidence. They shape me into a more resilient learner, strengthening both my skills and self‑belief.</p>
+          <h3>Threats</h3>
+          <p>Unexpected changes can momentarily unsettle momentum. I work to regain clarity quickly, adapt with intent, and continue progress.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Education -->
+    <section id="education">
+      <h2>Education Details</h2>
+      <div class="divider"></div>
+      <div class="content single">
+        <div>
+          <img src="images/daffodil.jpg.webp" alt="Daffodil English Medium School, Umadi">
+          <h3>Daffodil English Medium School, Umadi (2013–2023)</h3>
+          <p>
+            I completed my schooling from nursery to 10th grade at <strong>Daffodil English Medium School</strong> in Umadi.
+            Known for quality education, the school fostered a vibrant culture with annual gatherings and Christmas events.
+            It gave me a strong foundation and countless memories I carry forward.
+          </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div>
+          <img src="images/Sinhgad.jpg" alt="Sinhgad College, Korti, Pandharpur">
+          <h3>Sinhgad College, Korti, Pandharpur (11th & 12th) (2024–2025)</h3>
+          <p>
+            I completed my higher secondary education at <strong>Sinhgad College</strong>, Korti, Pandharpur.
+            The welcoming campus and supportive environment made it ideal for academic growth and personal development.
+            Those two years shaped my path toward engineering and long‑term goals.
+          </p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div>
+          <img src="images/adcet.jpg" alt="Annasaheb Dange College of Engineering and Technology, Ashta, Sangli">
+          <h3>Annasaheb Dange College of Engineering and Technology, Ashta, Sangli</h3>
+          <p>
+            I am currently in my first year of <strong>Computer Science and Engineering</strong> at ADCET, Ashta, Sangli.
+            The CSE department provides a strong academic foundation and space to explore technology and programming.
+            Teachers are approachable, and the campus offers facilities for holistic growth, including a modern sports complex.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hobbies -->
+    <section id="hobbies">
+      <h2>Hobbies</h2>
+      <div class="divider"></div>
+      <div class="content">
+        <img src="images/Sketching.JPG" alt="Sketching and drawing artwork">
+        <div>
+          <p>
+            Sketching and drawing are my quiet forms of expression and creative release.
+            Whether capturing a fleeting thought or shaping abstract ideas through lines and shading, the process brings calm and clarity.
+          </p>
+          <p>
+            This practice sharpens attention to detail, fuels imagination, and inspires how I solve problems in technology—where logic meets creativity.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Achievements -->
+    <section id="achievements">
+      <h2>Achievements</h2>
+      <div class="divider"></div>
+      <div class="content">
+        <img src="images/Achievement.jpg" alt="Achievement">
+        <div>
+          <ul style="line-height: 1.8;">
+            <li><strong>Website launch:</strong> Built and launched my personal website from scratch to showcase my work.</li>
+            <li><strong>Core web skills:</strong> Learned HTML, CSS, and basic JavaScript to create responsive pages.</li>
+            <li><strong>Digital marketing:</strong> Completed an online course to improve content reach and audience engagement.</li>
+            <li><strong>Community contribution:</strong> Designed a simple poster for a local event and helped with promotion.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vision & Mission -->
+    <section id="vision">
+      <h2>Vision & Mission</h2>
+      <div class="divider"></div>
+      <div class="content">
+        <img src="images/vision and mission.png" alt="Vision and mission illustration">
+        <div>
+          <p>
+            My vision is to evolve continuously—creatively, professionally, and personally—by embracing challenges that refine me.
+            I aim to contribute meaningfully through work that reflects depth, precision, and purpose, leaving a mark that inspires and elevates standards.
+            Growth isn’t just a goal—it’s the rhythm I choose to live by.
+          </p>
+          <p>
+            My mission is to stay committed to growth through intentional action, creative discipline, and meaningful engagement.
+            I focus on refining skills, embracing new challenges, and contributing with purpose—each step aligned with my larger vision.
+            Every project and effort reflects my drive to move forward with clarity and impact.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Action plan -->
+    <section id="action-plan">
+      <h2>Action Plan</h2>
+      <div class="divider"></div>
+      <div class="content single">
+        <p><strong>Year 1:</strong> Focus on academics and achieve the best results. Build strong study habits and participate in competitions to gain confidence.</p>
+        <p><strong>Year 2:</strong> Begin learning programming languages such as C and C++. Strengthen problem-solving skills through projects and coding practice.</p>
+        <p><strong>Year 3:</strong> Expand knowledge into Java and web technologies like HTML/CSS. Work on collaborative projects and explore innovative ideas.</p>
+        <p><strong>Year 4:</strong> Create something unique and impactful that showcases creativity and technical skills. Prepare for career opportunities by refining abilities and embracing challenges.</p>
+      </div>
+    </section>
+
+    <!-- Goal -->
+    <section id="goal">
+      <h2>Goal</h2>
+      <div class="divider"></div>
+      <div class="content">
+        <img src="images/goal.jpg" alt="Goal and target concept">
+        <div>
+          <h3>SHORT-TERM GOALS (1–3 YEARS)</h3>
+          <ul>
+            <li>Focus on academics and aim for the best results.</li>
+            <li>Develop consistent study habits and disciplined effort to strengthen my foundation.</li>
+            <li>Participate in competitions and activities to build confidence and practical skills.</li>
+          </ul>
+
+          <h3>LONG-TERM GOALS (4–5 YEARS)</h3>
+          <ul>
+            <li>Learn programming languages like C, C++, Java, and HTML.</li>
+            <li>Work on innovative projects that combine creativity and technology.</li>
+            <li>Create something unique and impactful to shape my career path.</li>
+            <li>Prepare for future opportunities by refining skills and embracing challenges.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- My Ideal -->
+    <section id="ideal">
+      <h2>Christopher Nolan</h2>
+      <div class="divider"></div>
+      <div class="content">
+        <img src="images/Christopher.jpg" alt="Christopher Nolan portrait">
+        <div>
+          <p>
+            Christopher Nolan captivates me with films that bend time, challenge perception, and dive into the human psyche.
+            His storytelling is architectural—layered with complexity and emotion that lingers long after the credits.
+          </p>
+          <p>
+            His work sparked my fascination with science fiction and exploring ideas beyond the ordinary.
+            Nolan’s vision inspires me to think deeper, embrace abstraction, and pursue creativity that defies limits—shaping how I see possibility itself.
+            His ability to turn unimaginable ideas into reality is something I want to carry in my own journey.
+          </p>
+        </div>
+      </div>
+    </section>
+
+   <!-- Gallery -->
+<section id="gallery">
+  <h2>Gallery</h2>
+  <div class="divider"></div>
+  <p>Christopher Nolan Films I’ve Watched and Recommend</p>
+
+  <!-- INTERSTELLAR -->
+  <div style="text-align:center;">
+    <img src="images/Interstellar.jpg" alt="Interstellar movie poster" style="margin-bottom:15px; border-radius:12px; width:180px; height:auto;">
+  </div>
+  <div>
+    <h3>INTERSTELLAR — November 7, 2014 (Worldwide)</h3>
+    <p>
+      Interstellar — A Journey Beyond Space, Time, and Humanity, directed by Christopher Nolan,
+      is not just a film but an experience and a philosophy wrapped inside the silence of space.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- INCEPTION -->
+  <div style="text-align:center;">
+    <img src="images/Inception .png" alt="Inception movie poster" style="margin-bottom:15px; border-radius:12px; width:180px; height:auto;">
+  </div>
+  <div>
+    <h3>INCEPTION — July 16, 2010 (Worldwide)</h3>
+    <p>
+      Inception bends dreams into layered realities, blending emotion and intellect as Cobb ventures
+      through the subconscious to plant an idea. A masterpiece of ambition and imagination.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- DUNKIRK -->
+  <div style="text-align:center;">
+    <img src="images/Dunkirk .png" alt="Dunkirk movie poster" style="margin-bottom:15px; border-radius:12px; width:180px; height:auto;">
+  </div>
+  <div>
+    <h3>DUNKIRK — July 21, 2017 (Worldwide)</h3>
+    <p>
+      Dunkirk is Nolan’s intense survival epic told across land, sea, and air. Minimal dialogue,
+      raw tension, and immersive sound form a gripping cinematic tribute to endurance.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- OPPENHEIMER -->
+  <div style="text-align:center;">
+    <img src="images/oppenhiemer.png" alt="Oppenheimer movie poster" style="margin-bottom:15px; border-radius:12px; width:180px; height:auto;">
+  </div>
+  <div>
+    <h3>OPPENHEIMER — July 21, 2023 (Worldwide)</h3>
+    <p>
+      A powerful story of J. Robert Oppenheimer — a brilliant mind torn between innovation, politics,
+      and the moral consequences of creating the atomic bomb.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- MEMENTO -->
+  <div style="text-align:center;">
+    <img src="images/Memento.png" alt="Memento movie poster" style="margin-bottom:15px; border-radius:12px; width:180px; height:auto;">
+  </div>
+  <div>
+    <h3>MEMENTO — October 11, 2000 (Worldwide)</h3>
+    <p>
+      Memento traps viewers in Leonard’s fractured memory through its reverse structure.
+      A psychological puzzle exploring identity, truth, and perception.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- INSOMNIA -->
+  <div style="text-align:center;">
+    <img src="images/Insomnia .png" alt="Insomnia movie poster" style="margin-bottom:15px; border-radius:12px; width:180px; height:auto;">
+  </div>
+  <div>
+    <h3>INSOMNIA — May 24, 2002 (Worldwide)</h3>
+    <p>
+      Insomnia follows a detective battling guilt, daylight, and sleeplessness as morality unravels.
+      A psychological duel set under the sun that never sets.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TENET -->
+  <div style="text-align:center;">
+    <img src="images/Tenet .png" alt="Tenet movie poster" style="margin-bottom:15px; border-radius:12px; width:180px; height:auto;">
+  </div>
+  <div>
+    <h3>TENET — August 26, 2020 (Worldwide)</h3>
+    <p>
+      A high-stakes espionage thriller where time runs both forward and backward.
+      The Protagonist battles inversion and fate to prevent a world-ending paradox.
+    </p>
+  </div>
+</section>
+
+  <footer>
+    &copy; 2025 Sanskar. Made with creativity. |
+    <a href="https://github.com/yourusername" target="_blank" rel="noopener">GitHub</a> |
+    <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener">LinkedIn</a>
+  </footer>
+
+  <script>
+    const buttons = document.querySelectorAll('nav button');
+    let currentSection = null;
+
+    function hideAllSections() {
+      document.querySelectorAll('main section').forEach(section => {
+        section.classList.remove('show');
+      });
+    }
+
+    function setActiveButton(id) {
+      buttons.forEach(btn => {
+        btn.classList.remove('active');
+        btn.removeAttribute('aria-current');
+      });
+
+      if (!id) {
+        const home = document.getElementById('homeBtn');
+        if (home) {
+          home.classList.add('active');
+          home.setAttribute('aria-current', 'page');
+        }
+        return;
+      }
+
+      const btn = Array.from(buttons).find(b => b.dataset.section === id);
+      if (btn) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-current', 'page');
+      }
+    }
+
+    function showSection(id) {
+      const heading = document.querySelector('h1');
+      const intro = document.querySelector('.intro');
+
+      if (heading) { heading.style.display = 'none'; heading.style.animation = ''; }
+      if (intro)   { intro.style.display   = 'none'; intro.style.animation   = ''; }
+
+      hideAllSections();
+      const target = document.getElementById(id);
+
+      if (target) {
+        requestAnimationFrame(() => {
+          target.classList.add('show');
+          currentSection = id;
+        });
+      } else {
+        showHome();
+        return;
+      }
+
+      setActiveButton(id);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      history.replaceState(null, "", "#" + id);
+    }
+
+    function showHome() {
+      const heading = document.querySelector('h1');
+      const intro = document.querySelector('.intro');
+
+      hideAllSections();
+
+      if (heading) {
+        heading.style.display = 'block';
+        heading.style.animation = 'fadeInDown 0.9s ease-out';
+      }
+      if (intro) {
+        intro.style.display = 'block';
+        intro.style.animation = 'fadeInUp 0.9s ease forwards';
+      }
+
+      currentSection = null;
+      setActiveButton(null);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      history.replaceState(null, "", "#home");
+    }
+
+    // Button micro-interaction + keyboard accessibility
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.style.transform = 'translateY(-2px) scale(0.98)';
+        setTimeout(() => { btn.style.transform = ''; }, 140);
+      });
+      btn.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') btn.click();
+      });
+    });
+
+    // Deep link support
+    function initFromHash() {
+      const hash = (location.hash || "#home").replace("#", "");
+      if (hash && hash !== "home") {
+        showSection(hash);
+      } else {
+        showHome();
+      }
+    }
+
+    // Browser back/forward
+    window.addEventListener('popstate', initFromHash);
+    document.addEventListener('DOMContentLoaded', initFromHash);
+  </script>
+</body>
+</html>
